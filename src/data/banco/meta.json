@@ -1,0 +1,105 @@
+{
+ "fechaRevision": "2026-11-14",
+ "fuente": {
+  "documento": "Batería de preguntas y respuestas – Examen teórico Licencia de Conducir (IF-2019-33101289-GDEBA-DPPYSVMGGP)",
+  "urlOficial": "https://www.gba.gob.ar/static/seguridadvial/docs/cuestionario.pdf",
+  "obtenidoDe": "https://web.archive.org/web/20260916145504/https://www.gba.gob.ar/static/seguridadvial/docs/cuestionario.pdf",
+  "sha256": "4a894436d6164f080b785f48fac76d60b85a198ef99e8e9dab1260eda61cfb65",
+  "paginasProcesadas": "2 a 178 (secciones generales y «Auto y Camioneta»)"
+ },
+ "categorias": [
+  {
+   "id": "senales",
+   "nombre": "Señales de tránsito y señalización vial",
+   "preguntas": 105
+  },
+  {
+   "id": "prioridades",
+   "nombre": "Prioridades de paso",
+   "preguntas": 43
+  },
+  {
+   "id": "velocidades",
+   "nombre": "Velocidades y distancias",
+   "preguntas": 26
+  },
+  {
+   "id": "semaforos",
+   "nombre": "Semáforos e intersecciones",
+   "preguntas": 16
+  },
+  {
+   "id": "estacionamiento",
+   "nombre": "Estacionamiento y maniobras",
+   "preguntas": 35
+  },
+  {
+   "id": "adelantamiento",
+   "nombre": "Adelantamientos y sobrepasos",
+   "preguntas": 25
+  },
+  {
+   "id": "conduccion",
+   "nombre": "Seguridad vial y conducción preventiva",
+   "preguntas": 59
+  },
+  {
+   "id": "alcohol",
+   "nombre": "Alcohol, medicamentos y sustancias",
+   "preguntas": 17
+  },
+  {
+   "id": "documentacion",
+   "nombre": "Documentación obligatoria",
+   "preguntas": 27
+  },
+  {
+   "id": "vehiculo",
+   "nombre": "Elementos de seguridad del vehículo",
+   "preguntas": 55
+  },
+  {
+   "id": "siniestros",
+   "nombre": "Siniestros viales y primeros auxilios",
+   "preguntas": 14
+  },
+  {
+   "id": "convivencia",
+   "nombre": "Convivencia vial, ciclistas y peatones",
+   "preguntas": 46
+  },
+  {
+   "id": "normativa",
+   "nombre": "Normativa y responsabilidades del conductor",
+   "preguntas": 26
+  },
+  {
+   "id": "luces",
+   "nombre": "Uso de las luces",
+   "preguntas": 26
+  },
+  {
+   "id": "autopistas",
+   "nombre": "Autopistas y vías multicarril",
+   "preguntas": 11
+  }
+ ],
+ "totales": {
+  "transcriptas": 618,
+  "verificadas": 531,
+  "excluidas": 87,
+  "eliminatorias": 20,
+  "conImagen": 194,
+  "porMotivoDeExclusion": {
+   "duplicada": 8,
+   "conflicto": 16,
+   "desactualizada": 9,
+   "pendiente": 12,
+   "ambigua": 14,
+   "multiple": 8,
+   "transcripcion": 2,
+   "sin-respuesta": 12,
+   "otra-clase": 6
+  }
+ }
+}
