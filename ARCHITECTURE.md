@@ -43,7 +43,12 @@ La lógica es TypeScript puro, sin React ni acceso directo al navegador: funcion
 
 ## Persistencia
 
-Claves bajo el prefijo `simulador-pba:v1:` — `historial`, `estadisticas`, `examen-en-curso`, `preferencias`. Para un cambio incompatible de formato, subir la versión del prefijo y escribir una migración en `Almacen`.
+Claves bajo el prefijo `simulador-pba:v1:`:
+
+- Globales: `perfiles` (lista de personas) y `perfil-activo`.
+- Por persona, bajo `simulador-pba:v1:p:<idPerfil>:`: `historial`, `estadisticas`, `examen-en-curso`, `preferencias`. `clavesDe(perfilId)` las calcula; `Almacen(kv, perfilId)` lee y escribe sólo las de esa persona.
+- `RegistroPerfiles` (`persistencia/perfiles.ts`) administra la lista: crear (valida el nombre y, si es la primera persona, **migra** las claves globales de la versión sin perfiles a ella), activar, eliminar (borra sus claves) y `resumenDe` para el selector.
+- En la interfaz, `App` es la raíz: sin persona activa muestra `Perfiles`; con una, monta `AppPerfil` con `key = idPerfil`, de modo que al cambiar de persona se descarta todo el estado en memoria y `useAplicacion(perfil)` carga el de la nueva. Para un cambio incompatible de formato, subir la versión del prefijo y escribir una migración en `Almacen`.
 `Almacen` recibe un `AlmacenClaveValor` (por defecto `localStorage`; en memoria si está bloqueado), lo que permite reemplazarlo por IndexedDB o por una API remota sin tocar el resto.
 El volumen es pequeño: un intento de 40 preguntas con detalle ocupa unos 4 KB.
 
@@ -52,7 +57,7 @@ El volumen es pequeño: un intento de 40 preguntas con detalle ocupa unos 4 KB.
 `src/data/banco/oficial.json` (≈0,9 MB) se importa estáticamente y queda dentro del bundle (JS ≈1,1 MB, 170 KB comprimido). Las imágenes (≈10 MB, JPEG) se sirven desde `public/img/preguntas/` y se cargan sólo al mostrarse.
 Agregar preguntas no requiere tocar código: basta con sumar entradas a los JSON (o regenerarlos).
 
-## Pruebas (`npm test`, 104 casos)
+## Pruebas (`npm test`, 125 casos)
 
 | Archivo | Cubre |
 |---|---|
@@ -61,7 +66,9 @@ Agregar preguntas no requiere tocar código: basta con sumar entradas a los JSON
 | `evaluacion/evaluacion.test.ts` | Corrección, porcentajes, 75 % (23/30, 30/40), eliminatorias, examen de 40 de punta a punta, cierre por tiempo. |
 | `repaso/repaso.test.ts` | Registro de errores, prioridad (3 errores > 1), dominio, más falladas, cada criterio de la selección adaptativa. |
 | `persistencia/almacen.test.ts` | Guardar y recuperar, examen interrumpido, datos corruptos, exportar, reiniciar. |
+| `persistencia/perfiles.test.ts` | Validación de nombres, registro y persona activa, datos separados por persona, migración de datos previos, eliminar. |
 | `estadisticas/estadisticas.test.ts` | Resumen, evolución, aciertos por materia, preparación. |
+| `ui/Perfiles.test.tsx` | Primer registro con validación, recarga sin volver a preguntar, dos personas con progreso separado, nombre repetido, nombre en el resultado, eliminar con confirmación. |
 | `ui/App.test.tsx` | Con el banco real: inicio; simulacro de 40 completo con revisión; recarga a mitad de examen; estudio → repaso → dominada; progreso y reinicio. |
 
 ## Decisiones

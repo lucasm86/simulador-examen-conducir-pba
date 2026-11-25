@@ -101,7 +101,7 @@ export function Examen({ app, ir, verResultado }: { app: Aplicacion; ir: (r: Rut
           <BarraProgreso valor={respondidas} maximo={total} etiqueta={`Respondidas ${respondidas} de ${total}`} />
         </div>
         <p className="mt-1 text-xs text-tinta-3">
-          {respondidas} respondidas · {sinResponder.length} pendientes
+          {app.perfil.nombre} · {respondidas} respondidas · {sinResponder.length} pendientes
           {pocoTiempo && <span className="font-semibold text-mal"> · Quedan menos de 5 minutos</span>}
         </p>
       </div>

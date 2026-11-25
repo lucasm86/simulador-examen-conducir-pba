@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAplicacion } from './estado'
 import { Inicio } from './pantallas/Inicio'
 import { ConfigExamen } from './pantallas/ConfigExamen'
@@ -7,6 +7,8 @@ import { Resultados, Revision } from './pantallas/Resultados'
 import { Estudio, Inteligente, Repaso } from './pantallas/Aprender'
 import { Progreso } from './pantallas/Progreso'
 import { Acerca } from './pantallas/Acerca'
+import { Avatar, Perfiles } from './pantallas/Perfiles'
+import { RegistroPerfiles, type Perfil } from '../persistencia/perfiles'
 
 export type Ruta = 'inicio' | 'simulacro' | 'examen' | 'resultado' | 'revision' | 'estudio' | 'repaso' | 'inteligente' | 'progreso' | 'acerca'
 const RUTAS: Ruta[] = ['inicio', 'simulacro', 'examen', 'resultado', 'revision', 'estudio', 'repaso', 'inteligente', 'progreso', 'acerca']
@@ -22,8 +24,8 @@ function leerHash(): Ubicacion {
   return { ruta: RUTAS.includes(ruta as Ruta) ? (ruta as Ruta) : 'inicio', param: param ? decodeURIComponent(param) : null }
 }
 
-export function App() {
-  const app = useAplicacion()
+function AppPerfil({ perfil, onCambiar }: { perfil: Perfil; onCambiar: () => void }) {
+  const app = useAplicacion(perfil)
   const [ubicacion, setUbicacion] = useState<Ubicacion>(leerHash)
 
   useEffect(() => {
@@ -88,9 +90,55 @@ export function App() {
           El banco de preguntas tiene {app.banco.informe.errores} errores de validación. Las preguntas afectadas se excluyeron automáticamente.
         </p>
       )}
+      {ruta !== 'examen' && (
+        <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-borde bg-superficie px-3 py-2">
+          <span className="flex min-w-0 items-center gap-2 text-sm">
+            <Avatar nombre={perfil.nombre} tamano={28} />
+            <span className="truncate">
+              Estudia: <strong className="text-marca">{perfil.nombre}</strong>
+            </span>
+          </span>
+          <button type="button" onClick={onCambiar} className="min-h-11 shrink-0 rounded-lg px-2 text-sm font-medium text-acento hover:underline">
+            Cambiar de persona
+          </button>
+        </div>
+      )}
       <main id="contenido" key={ruta + (param ?? '')}>
         {pantalla}
       </main>
     </div>
   )
+}
+
+/** Raíz: pide registrarse o elegir persona; luego monta la app de esa persona (con su propio estado). */
+export function App() {
+  const registro = useMemo(() => new RegistroPerfiles(), [])
+  const [perfiles, setPerfiles] = useState(() => registro.listar())
+  const [activo, setActivo] = useState<Perfil | null>(() => registro.activo())
+
+  const refrescar = () => {
+    setPerfiles(registro.listar())
+    setActivo(registro.activo())
+  }
+  const entrar = (id: string | null) => {
+    window.location.hash = ''
+    registro.activar(id)
+    refrescar()
+  }
+
+  if (!activo) {
+    return (
+      <Perfiles
+        perfiles={perfiles}
+        resumenDe={(id) => registro.resumenDe(id)}
+        onElegir={entrar}
+        onCrear={(nombre) => entrar(registro.crear(nombre).perfil.id)}
+        onEliminar={(id) => {
+          registro.eliminar(id)
+          refrescar()
+        }}
+      />
+    )
+  }
+  return <AppPerfil key={activo.id} perfil={activo} onCambiar={() => entrar(null)} />
 }

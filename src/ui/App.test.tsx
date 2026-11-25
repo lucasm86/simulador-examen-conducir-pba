@@ -3,12 +3,18 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { App } from './App'
 import { obtenerBanco } from '../banco/banco'
-import { CLAVES } from '../persistencia/almacen'
+import { clavesDe } from '../persistencia/almacen'
+import { RegistroPerfiles } from '../persistencia/perfiles'
 import type { Intento, SesionExamen } from '../domain/types'
 
 const banco = obtenerBanco()
-const sesionGuardada = () => JSON.parse(localStorage.getItem(CLAVES.examenEnCurso)!) as SesionExamen
-const historial = () => JSON.parse(localStorage.getItem(CLAVES.historial) ?? '[]') as Intento[]
+let perfilId = ''
+const claves = () => clavesDe(perfilId)
+/** Texto de la opción sin el prefijo oculto para lectores de pantalla. */
+const textoOpcion = (r: HTMLElement) => r.textContent!.replace(/^.*?Opción \S+: /, '')
+const esOpcion = (r: HTMLElement, texto: string) => textoOpcion(r) === texto
+const sesionGuardada = () => JSON.parse(localStorage.getItem(claves().examenEnCurso)!) as SesionExamen
+const historial = () => JSON.parse(localStorage.getItem(claves().historial) ?? '[]') as Intento[]
 
 /** Responde la pregunta visible: bien o mal según se pida. Devuelve el texto elegido. */
 async function responderVisible(user: ReturnType<typeof userEvent.setup>, indice: number, bien: boolean) {
@@ -21,6 +27,9 @@ async function responderVisible(user: ReturnType<typeof userEvent.setup>, indice
 }
 
 beforeEach(() => {
+  const registro = new RegistroPerfiles()
+  perfilId = registro.crear('Lucas').perfil.id
+  registro.activar(perfilId)
   window.location.hash = ''
   HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
     this.setAttribute('open', '')
@@ -88,11 +97,11 @@ describe('simulacro de 40 preguntas de principio a fin', () => {
     expect(intento.aprobado).toBe(intento.eliminatoriasFalladas === 0)
     expect(screen.getByText(intento.aprobado ? 'APROBADO' : 'DESAPROBADO')).toBeTruthy()
     expect(screen.getByText('35 de 40 correctas ·', { exact: false })).toBeTruthy()
-    expect(localStorage.getItem(CLAVES.examenEnCurso)).toBeNull()
+    expect(localStorage.getItem(claves().examenEnCurso)).toBeNull()
 
     // revisión: cada pregunta con la elegida, la correcta y su explicación
     await user.click(screen.getByRole('button', { name: 'Revisar mis respuestas' }))
-    expect(await screen.findByRole('heading', { name: 'Revisión de respuestas' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: /^Revisión de respuestas/ })).toBeTruthy()
     expect(screen.getAllByText('Fundamento')).toHaveLength(40)
     await user.click(screen.getByRole('button', { name: 'Sólo las incorrectas' }))
     expect(screen.getAllByText('Fundamento')).toHaveLength(5)
@@ -100,7 +109,7 @@ describe('simulacro de 40 preguntas de principio a fin', () => {
     expect(screen.getByText(/Sin responder/)).toBeTruthy()
 
     // los errores quedaron registrados para el repaso
-    const est = JSON.parse(localStorage.getItem(CLAVES.estadisticas)!)
+    const est = JSON.parse(localStorage.getItem(claves().estadisticas)!)
     expect(Object.values(est).filter((e: any) => e.errores > 0)).toHaveLength(4)
   }, 60_000)
 
@@ -135,9 +144,13 @@ describe('modo estudio y repaso de errores', () => {
 
     // responde mal: se informa, se resalta la correcta y se muestra el fundamento
     const enunciado = screen.getByRole('heading', { level: 2 }).textContent!
-    const p = banco.preguntas.find((q) => q.enunciado === enunciado && q.categoria === 'prioridades')!
+    // el enunciado puede repetirse en varias preguntas: se identifica por enunciado + opciones mostradas
+    const mostradas = screen.getAllByRole('radio').map(textoOpcion).sort().join('|')
+    const p = banco.preguntas.find(
+      (q) => q.enunciado === enunciado && q.categoria === 'prioridades' && q.opciones.map((o) => o.texto).sort().join('|') === mostradas,
+    )!
     const correcta = p.opciones.find((o) => o.id === p.respuestaCorrecta)!.texto
-    const mala = screen.getAllByRole('radio').find((r) => !r.textContent!.includes(correcta))!
+    const mala = screen.getAllByRole('radio').find((r) => !esOpcion(r, correcta))!
     await user.click(mala)
     expect(await screen.findByText(/Incorrecto\. La respuesta correcta está resaltada/)).toBeTruthy()
     expect(screen.getByText(/Respuesta correcta$/)).toBeTruthy()
@@ -146,7 +159,7 @@ describe('modo estudio y repaso de errores', () => {
 
     // repetir la pregunta y acertar
     await user.click(screen.getByRole('button', { name: 'Repetir la pregunta' }))
-    await user.click(screen.getAllByRole('radio').find((r) => r.textContent!.includes(correcta))!)
+    await user.click(screen.getAllByRole('radio').find((r) => esOpcion(r, correcta))!)
     expect(await screen.findByText(/¡Correcto!/)).toBeTruthy()
     await user.click(screen.getByRole('button', { name: /Siguiente pregunta/ }))
     expect(screen.getByText('Pregunta 2 de 10')).toBeTruthy()
@@ -162,12 +175,12 @@ describe('modo estudio y repaso de errores', () => {
     expect(await screen.findByRole('heading', { level: 2, name: enunciado })).toBeTruthy()
 
     // si falla de nuevo, vuelve a aparecer hasta que la responda bien
-    await user.click(screen.getAllByRole('radio').find((r) => !r.textContent!.includes(correcta))!)
+    await user.click(screen.getAllByRole('radio').find((r) => !esOpcion(r, correcta))!)
     expect(await screen.findByText(/Va a volver a aparecer/)).toBeTruthy()
     await user.click(screen.getByRole('button', { name: /Siguiente pregunta/ }))
     expect(screen.getByText('Pregunta 2 de 2')).toBeTruthy()
     expect(screen.getByRole('heading', { level: 2, name: enunciado })).toBeTruthy()
-    await user.click(screen.getAllByRole('radio').find((r) => r.textContent!.includes(correcta))!)
+    await user.click(screen.getAllByRole('radio').find((r) => esOpcion(r, correcta))!)
     await user.click(screen.getByRole('button', { name: /Marcar como dominada/ }))
     await user.click(screen.getByRole('button', { name: 'Terminar' }))
     expect(await screen.findByText('Sesión terminada')).toBeTruthy()
@@ -184,7 +197,7 @@ describe('progreso', () => {
       correctas: 34, incorrectas: 6, sinResponder: 0, porcentaje: 85, aprobado: true, eliminatoriasEvaluadas: 0, eliminatoriasFalladas: 0,
       aplicoEliminatorias: true, porCategoria: { senales: { total: 40, correctas: 34 } }, detalle: [],
     }
-    localStorage.setItem(CLAVES.historial, JSON.stringify([intento]))
+    localStorage.setItem(claves().historial, JSON.stringify([intento]))
     const user = userEvent.setup()
     render(<App />)
     await user.click(screen.getByRole('button', { name: /Ver mi progreso/ }))
@@ -193,6 +206,6 @@ describe('progreso', () => {
     await user.click(screen.getByRole('button', { name: 'Reiniciar historial' }))
     await user.click(screen.getByRole('button', { name: 'Sí, borrar todo', hidden: true }))
     expect(await screen.findByText('Sin actividad registrada.')).toBeTruthy()
-    expect(localStorage.getItem(CLAVES.historial)).toBeNull()
+    expect(localStorage.getItem(claves().historial)).toBeNull()
   })
 })

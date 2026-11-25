@@ -2,6 +2,18 @@
 
 Simulador educativo independiente del examen teórico de conducir de la Provincia de Buenos Aires. Clase B1. Sin registro, sin backend, en español argentino.
 
+## 0. Personas (perfiles locales)
+
+Pensado para que varias personas compartan un mismo equipo sin mezclar su progreso. No hay contraseña, cuenta ni servidor: es sólo un nombre.
+
+- **Primera vez:** pantalla «¡Bienvenido/a al simulador!» con un único campo, «¿Cómo te llamás?». El nombre se normaliza (espacios), debe tener entre 2 y 24 caracteres y no puede repetirse (sin distinguir mayúsculas ni acentos). Hasta 8 personas por dispositivo.
+- **Después:** el simulador recuerda a la última persona y entra directo. Una barra superior muestra «Estudia: *nombre*» con el botón «Cambiar de persona», que lleva al selector.
+- **Selector «¿Quién va a estudiar?»:** una tarjeta por persona con la cantidad de simulacros, la fecha de la última actividad y si tiene un simulacro sin terminar; «+ Agregar otra persona»; y eliminar (con confirmación; borra todos sus datos).
+- **Qué es individual:** historial, estadísticas por pregunta (errores, dominadas, lista de repaso), simulacro en curso y preferencias. Estudiar por temas, Repasar errores y Práctica inteligente trabajan sobre los datos de la persona activa.
+- **Dónde se ve el nombre:** barra superior, encabezado del simulacro en curso, resultado y revisión, título de «Progreso» y archivo exportado.
+- **Datos previos:** si el navegador ya tenía progreso de la versión sin personas, pasa a la primera persona que se registre.
+- **Límites:** los perfiles viven en el navegador de cada dispositivo; no se sincronizan entre equipos y borrar los datos del navegador los elimina (exportar el historial sirve de copia). Al no haber contraseña, cualquiera que use el equipo puede elegir a cualquier persona.
+
 ## 1. Pantalla de inicio
 
 - Título «SIMULADOR DE EXAMEN DE CONDUCIR» y subtítulo «Prepará tu examen teórico de la Provincia de Buenos Aires».
@@ -72,13 +84,14 @@ Revisión: cada pregunta con la opción elegida, la correcta, el fundamento, la 
 - Evolución de los últimos 10 simulacros (línea con referencia en 75 %, detalle al pasar el cursor o con Tab, tabla alternativa para lectores de pantalla).
 - Aciertos por materia sobre todas las respuestas registradas.
 - Preguntas más falladas e historial (fecha, modalidad, aciertos, duración, resultado; los simulacros enlazan a su resultado).
-- Exportar historial a JSON y Reiniciar historial (con confirmación).
+- Exportar historial a JSON y Reiniciar historial (con confirmación); ambos actúan sólo sobre la persona activa.
 
 ## 4. Datos que se guardan (sólo en el navegador)
 
 - Cada intento: fecha, modalidad, clase, duración, total, respondidas, correctas, incorrectas, sin responder, porcentaje, aprobado, eliminatorias, desempeño por materia y detalle por pregunta (el detalle se conserva para los 30 más recientes; máximo 300 intentos).
 - Por pregunta: vistas, aciertos, errores, racha, última vez, último error, dominada.
 - Examen en curso y preferencias.
+- Todo lo anterior se guarda por persona (ver sección 0), más la lista de personas y cuál está activa.
 
 Las sesiones de estudio, repaso y práctica inteligente se registran al terminarlas o abandonarlas, con el primer intento de cada pregunta.
 
@@ -99,4 +112,4 @@ Las sesiones de estudio, repaso y práctica inteligente se registran al terminar
 
 ## 7. Fuera de alcance en esta versión
 
-Clases distintas de B1; preguntas de selección múltiple; preguntas complementarias redactadas a partir del manual; PWA / uso sin conexión; importar un historial exportado; modo oscuro.
+Clases distintas de B1; preguntas de selección múltiple; preguntas complementarias redactadas a partir del manual; PWA / uso sin conexión; importar un historial exportado; sincronizar personas entre dispositivos; renombrar una persona; modo oscuro.

@@ -86,7 +86,7 @@ export function Inicio({ app, ir }: { app: Aplicacion; ir: (r: Ruta) => void }) 
 
       <section aria-label="Resumen de tu desempeño" className="mt-6 rounded-2xl border border-borde bg-superficie px-5 py-4 text-sm text-tinta-2">
         {resumen.simulacros === 0 && resumen.preguntasRespondidas === 0 ? (
-          <p>Todavía no hay actividad registrada. Tus resultados se guardan sólo en este dispositivo, sin cuenta ni registro.</p>
+          <p>Todavía no hay actividad registrada. Tus resultados se guardan sólo en este dispositivo, sin contraseña ni cuenta.</p>
         ) : (
           <ul className="m-0 flex list-none flex-wrap gap-x-6 gap-y-1 p-0">
             <li>

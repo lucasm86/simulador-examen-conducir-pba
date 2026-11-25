@@ -32,7 +32,7 @@ export function Resultados({ app, ir, intentoId, revisar }: { app: Aplicacion; i
 
   return (
     <>
-      <Titulo volver={() => ir('inicio')}>Resultado del simulacro</Titulo>
+      <Titulo volver={() => ir('inicio')}>Resultado del simulacro de {app.perfil.nombre}</Titulo>
 
       <div
         role="status"
@@ -117,7 +117,7 @@ export function Revision({ app, ir, intentoId, volver }: { app: Aplicacion; ir: 
 
   return (
     <>
-      <Titulo volver={() => ir('inicio')}>Revisión de respuestas</Titulo>
+      <Titulo volver={() => ir('inicio')}>Revisión de respuestas · {app.perfil.nombre}</Titulo>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-tinta-2">
           {intento.correctas} correctas · {intento.incorrectas} incorrectas · {intento.sinResponder} sin responder

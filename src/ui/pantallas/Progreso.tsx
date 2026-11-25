@@ -31,7 +31,7 @@ export function Progreso({ app, ir, verResultado }: { app: Aplicacion; ir: (r: R
 
   return (
     <>
-      <Titulo volver={() => ir('inicio')}>Mi progreso</Titulo>
+      <Titulo volver={() => ir('inicio')}>Progreso de {app.perfil.nombre}</Titulo>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Dato etiqueta="Simulacros" valor={resumen.simulacros} nota={`${resumen.aprobados} aprobados`} />
@@ -140,12 +140,12 @@ export function Progreso({ app, ir, verResultado }: { app: Aplicacion; ir: (r: R
             Reiniciar historial
           </Boton>
         </div>
-        <p className="mt-3 text-xs text-tinta-3">Los datos se guardan únicamente en este navegador. No hay cuentas ni se envía nada a ningún servidor.</p>
+        <p className="mt-3 text-xs text-tinta-3">Los datos de cada persona se guardan únicamente en este navegador. No hay cuentas ni se envía nada a ningún servidor.</p>
       </Tarjeta>
 
       <Dialogo abierto={confirmar} titulo="¿Reiniciar todo el historial?" onCerrar={() => setConfirmar(false)}>
         <Aviso tono="mal">
-          Se van a borrar de este dispositivo los resultados, las estadísticas por pregunta, la lista de repaso y cualquier simulacro en curso. No se puede
+          Se van a borrar de este dispositivo los resultados, las estadísticas por pregunta, la lista de repaso y cualquier simulacro en curso de {app.perfil.nombre}. El resto de las personas no se ve afectado. No se puede
           deshacer. Si querés conservar una copia, exportá el historial antes.
         </Aviso>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">

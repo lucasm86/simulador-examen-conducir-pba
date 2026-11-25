@@ -3,12 +3,13 @@ import type { Intento, MapaEstadisticas, Preferencias, ResultadoPregunta, Sesion
 import { obtenerBanco } from '../banco/banco'
 import { sesionValida } from '../motor/examen'
 import { Almacen } from '../persistencia/almacen'
+import type { Perfil } from '../persistencia/perfiles'
 import { marcarDominada, registrarResultados } from '../repaso/repaso'
 
 /** Estado global de la app: banco + datos persistidos. Toda escritura pasa por acá. */
-export function useAplicacion() {
+export function useAplicacion(perfil: Perfil) {
   const banco = useMemo(() => obtenerBanco(), [])
-  const almacen = useMemo(() => new Almacen(), [])
+  const almacen = useMemo(() => new Almacen(undefined, perfil.id), [perfil.id])
   const [historial, setHistorial] = useState<Intento[]>(() => almacen.leerHistorial())
   const [estadisticas, setEstadisticas] = useState<MapaEstadisticas>(() => almacen.leerEstadisticas())
   const [preferencias, setPreferencias] = useState<Preferencias>(() => almacen.leerPreferencias())
@@ -72,9 +73,10 @@ export function useAplicacion() {
     setExamen(null)
   }, [almacen])
 
-  const exportar = useCallback(() => almacen.exportar(), [almacen])
+  const exportar = useCallback(() => almacen.exportar(new Date(), perfil.nombre), [almacen, perfil.nombre])
 
   return {
+    perfil,
     banco,
     historial,
     estadisticas,
