@@ -68,11 +68,13 @@ describe('atajos en el simulacro', () => {
 
   it('Esc abre la confirmación de finalizar y volver a apretarlo la cierra', async () => {
     const user = await empezar()
-    await user.keyboard('3{Escape}')
+    await user.keyboard('1{Escape}')
     expect(screen.getByRole('heading', { name: '¿Finalizar el examen?', hidden: true })).toBeTruthy()
-    // con el diálogo abierto los atajos no actúan sobre el examen
-    await user.keyboard('1')
-    expect(Object.values(sesion().respuestas)).toHaveLength(1)
+    const antes = sesion().respuestas
+    expect(Object.keys(antes)).toHaveLength(1)
+    // con el diálogo abierto los atajos no actúan sobre el examen (la 2 existe en toda pregunta, incluso en verdadero/falso)
+    await user.keyboard('2')
+    expect(sesion().respuestas).toEqual(antes)
   })
 
   it('Enter en la última pregunta propone finalizar', async () => {
