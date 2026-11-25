@@ -30,6 +30,15 @@ npm run fuentes:check
 
 Descarga los PDF de la URL oficial y compara su hash con `fuentes/*.pdf` (salida 0 = sin cambios, 1 = cambiaron, 2 = no se pudo comprobar).
 Con `python -I tools/extraccion/verificar_fuentes.py --guardar` deja las versiones nuevas en `fuentes/nuevas/`.
+### Vigilancia automática
+
+`.github/workflows/vigilancia.yml` corre cada lunes (y a pedido desde la pestaña *Actions*): ejecuta `verificar_fuentes.py --json` y publica el resultado
+en la rama `estado` (`estado.json`). La app lo lee al abrirse (`src/vigencia/`) y, si los documentos oficiales cambiaron, muestra un aviso en el inicio.
+Si hay cambios el trabajo termina en rojo, para que GitHub avise por mail. Si el sitio oficial no responde, el resultado es «no verificable» y no se avisa nada.
+
+Límites: sólo detecta cambios en los dos PDF (cuestionario y manual). **No** detecta cambios de leyes ni del formato del examen real; para eso la app avisa
+cuando la última revisión normativa del banco supera los 90 días. Detectar un cambio no actualiza preguntas: hay que revisarlo y curarlo a mano.
+
 Si hay cambios: revisar el documento, reemplazarlo en `fuentes/`, ejecutar `npm run banco` y repasar la curaduría (ver QUESTION_BANK.md).
 
 ## Normativa contrastada

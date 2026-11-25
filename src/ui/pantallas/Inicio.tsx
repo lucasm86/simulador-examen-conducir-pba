@@ -5,8 +5,10 @@ import { preparacionEstimada, resumenGeneral } from '../../estadisticas/estadist
 import { filtrarPreguntas } from '../../banco/banco'
 import { pendientes } from '../../motor/examen'
 import { Aviso, Boton } from '../componentes/Base'
+import { AvisoVigencia, fechaLarga, useVigencia } from '../componentes/AvisoVigencia'
 
 export function Inicio({ app, ir }: { app: Aplicacion; ir: (r: Ruta) => void }) {
+  const vigencia = useVigencia(app.banco.meta.fechaRevision)
   const preguntas = filtrarPreguntas(app.banco.preguntas, { clase: app.preferencias.clase })
   const resumen = resumenGeneral(app.historial, preguntas, app.estadisticas)
   const enRepaso = colaDeRepaso(preguntas, app.estadisticas).length
@@ -31,6 +33,8 @@ export function Inicio({ app, ir }: { app: Aplicacion; ir: (r: Ruta) => void }) 
         <h1 className="text-2xl font-bold tracking-tight text-marca sm:text-4xl">SIMULADOR DE EXAMEN DE CONDUCIR</h1>
         <p className="mt-2 text-base text-tinta-2 sm:text-lg">Prepará tu examen teórico de la Provincia de Buenos Aires</p>
       </header>
+
+      <AvisoVigencia vigencia={vigencia} fechaRevision={app.banco.meta.fechaRevision} />
 
       {app.examen && (
         <div className="mb-5">
@@ -113,6 +117,11 @@ export function Inicio({ app, ir }: { app: Aplicacion; ir: (r: Ruta) => void }) 
         <button type="button" className="font-medium text-acento underline" onClick={() => ir('acerca')}>
           Fuentes, banco de preguntas y limitaciones
         </button>
+        {vigencia.comprobadoEl && (
+          <span className="mt-1 block">
+            Preguntas revisadas contra la normativa el {fechaLarga(app.banco.meta.fechaRevision)}. Fuentes oficiales comprobadas el {fechaLarga(vigencia.comprobadoEl)}: sin cambios.
+          </span>
+        )}
       </p>
     </>
   )

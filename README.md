@@ -10,7 +10,7 @@ Requisitos: Node 20+.
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 134 pruebas automatizadas (Vitest)
+npm test           # 149 pruebas automatizadas (Vitest)
 npm run build      # typecheck + build de producción en dist/
 ```
 
@@ -21,6 +21,7 @@ npm run build      # typecheck + build de producción en dist/
 - **Progreso**: historial, evolución de los últimos 10 simulacros, aciertos por materia, más falladas, preparación estimada, exportar a JSON y reiniciar.
 - **Personas en un mismo equipo:** un registro sencillo (sólo el nombre) y un selector para alternar; cada persona tiene su propio historial, errores y dominadas.
 - **Teclado:** `1`–`9` eligen opción, `Enter` siguiente, `Retroceso` anterior, `Esc` finalizar (en estudio, repaso y práctica: `Retroceso` repite la pregunta y `Esc` termina la sesión).
+- **Vigencia:** una tarea semanal de GitHub compara los PDF oficiales con la copia del banco; si cambiaron (o si la revisión normativa tiene más de 90 días) la app lo avisa al abrirse.
 - Persistencia en `localStorage`; un simulacro interrumpido se recupera al recargar.
 
 ## Banco de preguntas

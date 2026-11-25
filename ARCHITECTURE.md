@@ -22,6 +22,7 @@ La lógica es TypeScript puro, sin React ni acceso directo al navegador: funcion
 | Repaso | `src/repaso/repaso.ts` | Estadísticas por pregunta, dominio, cola de repaso, selección adaptativa. |
 | Estadísticas | `src/estadisticas/estadisticas.ts` | Resumen, evolución, aciertos por materia, preparación estimada. |
 | Persistencia | `src/persistencia/almacen.ts` | `localStorage` con claves versionadas, tolerancia a datos corruptos, exportar y reiniciar. |
+| Vigencia | `src/vigencia/vigencia.ts` | Lee `estado.json` (rama `estado`, escrito por el workflow semanal) y decide si avisar: fuentes cambiadas o revisión vieja. Nunca lanza ni bloquea sin red. |
 | Interfaz | `src/ui/` | Pantallas, componentes y el estado global. |
 | Importación | `tools/extraccion/` | Canal Python que genera el banco (ver QUESTION_BANK.md). No forma parte del bundle. |
 
@@ -59,7 +60,7 @@ El volumen es pequeño: un intento de 40 preguntas con detalle ocupa unos 4 KB.
 `src/data/banco/oficial.json` (≈0,9 MB) se importa estáticamente y queda dentro del bundle (JS ≈1,1 MB, 170 KB comprimido). Las imágenes (≈10 MB, JPEG) se sirven desde `public/img/preguntas/` y se cargan sólo al mostrarse.
 Agregar preguntas no requiere tocar código: basta con sumar entradas a los JSON (o regenerarlos).
 
-## Pruebas (`npm test`, 134 casos)
+## Pruebas (`npm test`, 149 casos)
 
 | Archivo | Cubre |
 |---|---|

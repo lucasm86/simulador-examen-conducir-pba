@@ -20,6 +20,7 @@ Pensado para que varias personas compartan un mismo equipo sin mezclar su progre
 - Cuatro tarjetas: Simular examen, Estudiar por temas, Repasar errores (con contador de pendientes), Ver mi progreso. Acceso a Práctica inteligente.
 - Resumen discreto: simulacros, promedio, mejor resultado, dominadas, preparación.
 - Si hay un simulacro sin terminar, aviso con botón «Continuar simulacro».
+- Aviso de vigencia: si la comprobación semanal de las fuentes oficiales detecta un cambio, o si la última revisión normativa del banco tiene más de 90 días, se muestra un aviso con enlace al sitio oficial. Sin conexión no se muestra nada. Si todo está al día, una línea discreta lo confirma.
 - Aclaración permanente de que no es una evaluación oficial y enlace a «Fuentes y banco de preguntas».
 
 ## 2. Modos

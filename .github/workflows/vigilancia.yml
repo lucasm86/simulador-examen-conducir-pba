@@ -1,0 +1,38 @@
+name: Vigilar fuentes oficiales
+
+# Una vez por semana compara los PDF oficiales con la copia usada para armar el banco
+# y publica el resultado en la rama `estado` (estado.json). La app lo lee al abrirse
+# y avisa si las fuentes cambiaron. Si hay cambios el trabajo termina en rojo
+# para que GitHub avise por mail.
+on:
+  schedule:
+    - cron: '17 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  vigilar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: comprobar
+        run: |
+          set +e
+          python -I tools/extraccion/verificar_fuentes.py --json "$RUNNER_TEMP/estado.json"
+          echo "codigo=$?" >> "$GITHUB_OUTPUT"
+      - name: Publicar estado.json en la rama estado
+        run: |
+          cd "$RUNNER_TEMP" && rm -rf publicar && mkdir publicar && cp estado.json publicar/ && cd publicar
+          git init -q -b estado
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add estado.json
+          git commit -q -m "Estado de las fuentes oficiales"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" estado
+      - name: Resultado
+        run: |
+          cat "$RUNNER_TEMP/estado.json"
+          # 0 = sin cambios, 2 = no se pudo comprobar (no es un cambio): ok. 1 = cambió algo: rojo.
+          [ "${{ steps.comprobar.outputs.codigo }}" != "1" ]
