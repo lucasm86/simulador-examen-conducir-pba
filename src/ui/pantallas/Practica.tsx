@@ -5,7 +5,8 @@ import { ordenarOpciones } from '../../motor/examen'
 import { nuevoId } from '../../motor/aleatorio'
 import { esCorrecta, evaluar } from '../../evaluacion/evaluacion'
 import { estaDominada } from '../../repaso/repaso'
-import { Aviso, BarraProgreso, Boton, Dato, Tarjeta } from '../componentes/Base'
+import { Aviso, BarraProgreso, Boton, Dato, LeyendaAtajos, Tarjeta } from '../componentes/Base'
+import { useAtajos } from '../atajos'
 import { Explicacion, TarjetaPregunta } from '../componentes/TarjetaPregunta'
 
 interface Props {
@@ -90,6 +91,24 @@ export function Practica({ app, modalidad, titulo, preguntas, onSalir, onOtra }:
     setIntentoN((n) => n + 1)
   }
 
+  // Atajos: 1–9 elige opción · Enter siguiente · Retroceso repetir la pregunta · Esc terminar la sesión
+  useAtajos({
+    activo: !terminada && preguntas.length > 0,
+    opcion: (n) => {
+      if (!respondida && orden[n - 1]) elegir(orden[n - 1])
+    },
+    siguiente: () => {
+      if (respondida) siguiente()
+    },
+    anterior: () => {
+      if (respondida) repetir()
+    },
+    salir: () => {
+      guardarSesion()
+      onSalir()
+    },
+  })
+
   if (preguntas.length === 0) {
     return <Aviso tono="aviso">No hay preguntas verificadas disponibles para esta selección.</Aviso>
   }
@@ -172,6 +191,15 @@ export function Practica({ app, modalidad, titulo, preguntas, onSalir, onOtra }:
           <Boton onClick={siguiente}>{pos + 1 >= cola.length ? 'Terminar' : 'Siguiente pregunta →'}</Boton>
         </div>
       )}
+
+      <LeyendaAtajos
+        items={[
+          ['1–9', 'elegir opción'],
+          ['Enter', 'siguiente'],
+          ['Retroceso', 'repetir la pregunta'],
+          ['Esc', 'terminar la sesión'],
+        ]}
+      />
     </>
   )
 }

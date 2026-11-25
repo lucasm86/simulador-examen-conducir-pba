@@ -10,7 +10,7 @@ Requisitos: Node 20+.
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 125 pruebas automatizadas (Vitest)
+npm test           # 134 pruebas automatizadas (Vitest)
 npm run build      # typecheck + build de producción en dist/
 ```
 
@@ -20,6 +20,7 @@ npm run build      # typecheck + build de producción en dist/
 - **Estudio por temas** (15 materias), **repaso de errores** (prioriza las más falladas, reintenta hasta acertar, marcar como dominada) y **práctica inteligente** (selección adaptativa).
 - **Progreso**: historial, evolución de los últimos 10 simulacros, aciertos por materia, más falladas, preparación estimada, exportar a JSON y reiniciar.
 - **Personas en un mismo equipo:** un registro sencillo (sólo el nombre) y un selector para alternar; cada persona tiene su propio historial, errores y dominadas.
+- **Teclado:** `1`–`9` eligen opción, `Enter` siguiente, `Retroceso` anterior, `Esc` finalizar (en estudio, repaso y práctica: `Retroceso` repite la pregunta y `Esc` termina la sesión).
 - Persistencia en `localStorage`; un simulacro interrumpido se recupera al recargar.
 
 ## Banco de preguntas

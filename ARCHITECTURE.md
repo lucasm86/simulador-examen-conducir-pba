@@ -32,6 +32,8 @@ La lógica es TypeScript puro, sin React ni acceso directo al navegador: funcion
 - `ui/pantallas/` — `Inicio`, `ConfigExamen`, `Examen`, `Resultados` (+ `Revision`), `Aprender` (`Estudio`, `Repaso`, `Inteligente`), `Practica` (sesión compartida por los tres modos de aprendizaje), `Progreso`, `Acerca`.
 - `ui/componentes/` — `TarjetaPregunta` (+ `Explicacion`), `Graficos` (SVG/CSS propios, sin librería), `Base` (botón, tarjeta, aviso, diálogo, barra de progreso), `LimiteDeErrores`.
 
+`ui/atajos.ts` (`useAtajos`) concentra los atajos de teclado de todas las pantallas de preguntas; ignora los campos de texto y deja que `Enter` sobre un botón haga su propia acción (salvo en las opciones de respuesta, donde significa «siguiente»).
+
 `TarjetaPregunta` recibe `mostrarSolucion`; `Examen` siempre pasa `false`. Esa es la garantía de que el simulacro no revela respuestas.
 
 ## Flujo de un simulacro
@@ -57,7 +59,7 @@ El volumen es pequeño: un intento de 40 preguntas con detalle ocupa unos 4 KB.
 `src/data/banco/oficial.json` (≈0,9 MB) se importa estáticamente y queda dentro del bundle (JS ≈1,1 MB, 170 KB comprimido). Las imágenes (≈10 MB, JPEG) se sirven desde `public/img/preguntas/` y se cargan sólo al mostrarse.
 Agregar preguntas no requiere tocar código: basta con sumar entradas a los JSON (o regenerarlos).
 
-## Pruebas (`npm test`, 125 casos)
+## Pruebas (`npm test`, 134 casos)
 
 | Archivo | Cubre |
 |---|---|
@@ -69,6 +71,7 @@ Agregar preguntas no requiere tocar código: basta con sumar entradas a los JSON
 | `persistencia/perfiles.test.ts` | Validación de nombres, registro y persona activa, datos separados por persona, migración de datos previos, eliminar. |
 | `estadisticas/estadisticas.test.ts` | Resumen, evolución, aciertos por materia, preparación. |
 | `ui/Perfiles.test.tsx` | Primer registro con validación, recarga sin volver a preguntar, dos personas con progreso separado, nombre repetido, nombre en el resultado, eliminar con confirmación. |
+| `ui/Atajos.test.tsx` | Teclado en el simulacro (números, Enter, Retroceso, Esc, última pregunta, Enter sobre botones) y en estudio y práctica inteligente. |
 | `ui/App.test.tsx` | Con el banco real: inicio; simulacro de 40 completo con revisión; recarga a mitad de examen; estudio → repaso → dominada; progreso y reinicio. |
 
 ## Decisiones

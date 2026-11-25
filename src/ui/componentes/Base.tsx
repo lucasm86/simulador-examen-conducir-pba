@@ -100,3 +100,17 @@ export function fechaCorta(iso: string): string {
 export function fechaHora(iso: string): string {
   return new Date(iso).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
 }
+
+/** Leyenda de atajos de teclado. Se oculta en pantallas angostas (celulares), donde no hay teclado físico. */
+export function LeyendaAtajos({ items }: { items: [tecla: string, accion: string][] }) {
+  return (
+    <p className="mt-4 hidden flex-wrap items-center gap-x-4 gap-y-1 text-xs text-tinta-3 sm:flex">
+      <span className="font-medium text-tinta-2">Atajos de teclado:</span>
+      {items.map(([tecla, accion]) => (
+        <span key={tecla}>
+          <kbd className="rounded border border-borde bg-superficie px-1.5 py-0.5 font-mono text-[11px] text-tinta-2">{tecla}</kbd> {accion}
+        </span>
+      ))}
+    </p>
+  )
+}

@@ -3,7 +3,8 @@ import type { Aplicacion } from '../estado'
 import type { Ruta } from '../App'
 import { formatearTiempo, irA, pendientes, responder, segundosRestantes, segundosTranscurridos } from '../../motor/examen'
 import { evaluarSesion } from '../../evaluacion/evaluacion'
-import { Aviso, BarraProgreso, Boton, Dialogo } from '../componentes/Base'
+import { Aviso, BarraProgreso, Boton, Dialogo, LeyendaAtajos } from '../componentes/Base'
+import { useAtajos } from '../atajos'
 import { TarjetaPregunta } from '../componentes/TarjetaPregunta'
 
 export function Examen({ app, ir, verResultado }: { app: Aplicacion; ir: (r: Ruta) => void; verResultado: (id: string) => void }) {
@@ -42,24 +43,24 @@ export function Examen({ app, ir, verResultado }: { app: Aplicacion; ir: (r: Rut
     refTitulo.current?.focus()
   }, [indice])
 
-  // Atajos: ← → para navegar, 1–9 para elegir opción
-  useEffect(() => {
-    if (!sesion) return
-    const onKey = (e: KeyboardEvent) => {
-      if (confirmar || e.ctrlKey || e.metaKey || e.altKey) return
-      const tag = (e.target as HTMLElement)?.tagName
-      if (tag === 'SELECT' || tag === 'INPUT' || tag === 'TEXTAREA') return
-      if (e.key === 'ArrowRight') app.actualizarExamen(irA(sesion, sesion.indice + 1))
-      else if (e.key === 'ArrowLeft') app.actualizarExamen(irA(sesion, sesion.indice - 1))
-      else if (/^[1-9]$/.test(e.key)) {
-        const ps = sesion.preguntas[sesion.indice]
-        const op = ps.orden[Number(e.key) - 1]
-        if (op) app.actualizarExamen(responder(sesion, ps.id, op))
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [sesion, app, confirmar])
+  // Atajos: 1–9 elige opción · Enter siguiente · Retroceso anterior · Esc finalizar · ← → navegan
+  useAtajos({
+    activo: !!sesion && !confirmar,
+    flechas: true,
+    opcion: (n) => {
+      if (!sesion) return
+      const ps = sesion.preguntas[sesion.indice]
+      const op = ps.orden[n - 1]
+      if (op) app.actualizarExamen(responder(sesion, ps.id, op))
+    },
+    siguiente: (origen) => {
+      if (!sesion) return
+      if (sesion.indice < sesion.preguntas.length - 1) app.actualizarExamen(irA(sesion, sesion.indice + 1))
+      else if (origen === 'enter') setConfirmar(true) // en la última, Enter equivale a «Finalizar examen»
+    },
+    anterior: () => sesion && app.actualizarExamen(irA(sesion, sesion.indice - 1)),
+    salir: () => setConfirmar(true),
+  })
 
   if (!sesion) {
     return (
@@ -162,6 +163,15 @@ export function Examen({ app, ir, verResultado }: { app: Aplicacion; ir: (r: Rut
           })}
         </nav>
       )}
+
+      <LeyendaAtajos
+        items={[
+          ['1–9', 'elegir opción'],
+          ['Enter', 'siguiente'],
+          ['Retroceso', 'anterior'],
+          ['Esc', 'finalizar'],
+        ]}
+      />
 
       <Dialogo abierto={confirmar} titulo="¿Finalizar el examen?" onCerrar={() => setConfirmar(false)}>
         {sinResponder.length > 0 ? (

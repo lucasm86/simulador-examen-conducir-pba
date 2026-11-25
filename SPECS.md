@@ -36,7 +36,7 @@ Durante el examen:
 - Nunca se muestra la respuesta correcta ni la explicación.
 - «Finalizar examen» disponible siempre; pide confirmación y lista las preguntas sin responder.
 - Cierre automático al agotarse el tiempo.
-- Atajos: `1`–`9` elige opción, `←` `→` navega, `↑` `↓` mueve el foco entre opciones.
+- Atajos de teclado (se muestran al pie en pantallas anchas): `1`–`9` elige la opción n; `Enter` pasa a la siguiente (en la última, abre «Finalizar»); `Retroceso` vuelve a la anterior conservando la respuesta; `Esc` abre la confirmación de finalizar; `←` `→` también navegan; `↑` `↓` mueven el foco entre opciones.
 
 Reglas:
 
@@ -65,6 +65,7 @@ Revisión: cada pregunta con la opción elegida, la correcta, el fundamento, la 
 - Sesiones de 10, 20 o todas las preguntas de la materia, en orden aleatorio.
 - Tras responder: correcto/incorrecto, opción correcta resaltada, fundamento y referencias.
 - Acciones: Repetir la pregunta, Marcar como dominada, Siguiente. Sin tiempo ni penalización.
+- Atajos (también en Repaso de errores y Práctica inteligente): `1`–`9` responde; una vez respondida, `Enter` pasa a la siguiente y `Retroceso` repite la pregunta; `Esc` termina la sesión.
 
 ### C. Repaso de errores
 
